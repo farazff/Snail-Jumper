@@ -44,8 +44,8 @@ class Evolution:
                 p1 = prev_players[i]
                 p2 = prev_players[i + 1]
                 child1, child2 = self.cross_over(p1, p2)
-                # child1.mutate(0.1)
-                # child2.mutate(0.1)
+                child1.mutate(0.1)
+                child2.mutate(0.1)
                 next_gen.append(self.clone_player(child1))
                 next_gen.append(self.clone_player(child2))
 
@@ -56,7 +56,7 @@ class Evolution:
 
         for layer_num in range(len(p1.nn.weights)):
             cross_over = random.uniform(0, 1)
-            if cross_over <= 0.2:
+            if cross_over <= 0.5:
                 point = random.randint(0, p1.nn.weights[layer_num].shape[1])
                 p1.cross_over(p2, layer_num, point)
 

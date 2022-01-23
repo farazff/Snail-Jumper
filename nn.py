@@ -1,4 +1,5 @@
 from copy import deepcopy
+from random import randint
 
 import numpy as np
 
@@ -78,3 +79,15 @@ class NeuralNetwork:
 
         self.b[layer_num] = new1b.T
         p2.nn.b[layer_num] = new2b.T
+
+    def mutate(self):
+        layer_number = randint(0, len(self.weights) - 1)
+        perceptron_number = randint(0, self.weights[layer_number].shape[1] - 1)
+        weights = self.weights[layer_number][:, [perceptron_number]]
+        b = self.b[layer_number][:, [perceptron_number]]
+
+        weights += np.random.normal(size=weights.shape) / 10
+        b += np.random.normal(size=b.shape) / 10
+
+        self.weights[layer_number][:, [perceptron_number]] = weights
+        self.b[layer_number][:, [perceptron_number]] = b

@@ -148,3 +148,8 @@ class Player(pygame.sprite.Sprite):
 
     def cross_over(self, p2, layer_num, point):
         self.nn.cross_over(p2, layer_num, point)
+
+    def mutate(self, chance):
+        rand = random.uniform(0, 1)
+        if rand <= chance:
+            self.nn.mutate()
