@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import numpy as np
 
 
@@ -17,8 +19,9 @@ class NeuralNetwork:
             if i == 0:
                 continue
             last_one = layer_sizes[i - 1]
-            self.weights.append(np.random.normal(size=(last_one, layer_sizes[i])))
-            self.b.append(np.zeros((1, last_one)).astype(np.longdouble))
+            size = (last_one, layer_sizes[i])
+            self.weights.append(np.random.normal(size=size))
+            self.b.append(np.zeros((1, layer_sizes[i])).astype(np.longdouble))
 
     def activation(self, x):
         """
@@ -38,7 +41,40 @@ class NeuralNetwork:
         """
         weights = self.weights
         b = self.b
+
         temp = self.activation(weights[0].T.dot(x) + b[0].T)
-        for i in range(1, len(self.layer_sizes)):
+        for i in range(1, len(self.layer_sizes) - 1):
             temp = self.activation(weights[i].T.dot(temp) + b[i].T)
         return temp
+
+    def cross_over(self, p2, layer_num, point):
+
+        self_layer = deepcopy(self.weights[layer_num].T)
+        other_layer = deepcopy(p2.nn.weights[layer_num].T)
+        self_bias = deepcopy(self.b[layer_num].T)
+        other_bias = deepcopy(p2.nn.b[layer_num].T)
+
+        st = self_layer
+        ot = other_layer
+        sb = self_bias
+        ob = other_bias
+
+        new1 = deepcopy(st)
+        new2 = deepcopy(ot)
+
+        new1b = deepcopy(sb)
+        new2b = deepcopy(ob)
+
+        for i in range(point, len(st)):
+            new1[i] = ot[i]
+            new1b[i] = ob[i]
+
+        for i in range(point, len(ot)):
+            new2[i] = st[i]
+            new2b[i] = sb[i]
+
+        self.weights[layer_num] = new1.T
+        p2.nn.weights[layer_num] = new2.T
+
+        self.b[layer_num] = new1b.T
+        p2.nn.b[layer_num] = new2b.T

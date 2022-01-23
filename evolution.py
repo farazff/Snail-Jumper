@@ -1,4 +1,5 @@
 import copy
+import random
 
 from player import Player
 
@@ -15,12 +16,14 @@ class Evolution:
         :param players: list of players in the previous generation
         :param num_players: number of players that we return
         """
-        # TODO (Implement top-k algorithm here)
+
+        sortedOne = sorted(players, key=lambda x: x.fitness, reverse=True)
+
         # TODO (Additional: Implement roulette wheel here)
         # TODO (Additional: Implement SUS here)
 
         # TODO (Additional: Learning curve)
-        return players[: num_players]
+        return sortedOne[: num_players]
 
     def generate_new_population(self, num_players, prev_players=None):
         """
@@ -34,9 +37,30 @@ class Evolution:
         if first_generation:
             return [Player(self.game_mode) for _ in range(num_players)]
         else:
-            # TODO ( Parent selection and child generation )
-            new_players = prev_players  # DELETE THIS AFTER YOUR IMPLEMENTATION
-            return new_players
+            next_gen = []
+            for i in range(0, len(prev_players), 2):
+                if len(next_gen) >= num_players:
+                    break
+                p1 = prev_players[i]
+                p2 = prev_players[i + 1]
+                child1, child2 = self.cross_over(p1, p2)
+                # child1.mutate(0.1)
+                # child2.mutate(0.1)
+                next_gen.append(self.clone_player(child1))
+                next_gen.append(self.clone_player(child2))
+
+            return next_gen
+
+    def cross_over(self, p1: Player, p2: Player) -> (Player, Player):
+        player1, player2 = self.clone_player(p1), self.clone_player(p2)
+
+        for layer_num in range(len(p1.nn.weights)):
+            cross_over = random.uniform(0, 1)
+            if cross_over <= 0.2:
+                point = random.randint(0, p1.nn.weights[layer_num].shape[1])
+                p1.cross_over(p2, layer_num, point)
+
+        return player1, player2
 
     def clone_player(self, player):
         """

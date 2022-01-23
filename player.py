@@ -36,7 +36,7 @@ class Player(pygame.sprite.Sprite):
         if self.game_mode == "Neuroevolution":
             self.fitness = 0  # Initial fitness
 
-            layer_sizes = [8, 50, 1]
+            layer_sizes = [8, 50, 3]
             self.nn = NeuralNetwork(layer_sizes)
 
     def generate_inputs(self, player_x, player_y, obstacles):
@@ -67,14 +67,13 @@ class Player(pygame.sprite.Sprite):
         input_vector = self.generate_inputs(player_x, player_y, obstacles)
         output_vector = self.nn.forward(input_vector)
 
-        gravity = output_vector[0]
-        if gravity < 0.5:
-            return
+        gravity = output_vector
 
-        if self.gravity == 'left':
-            self.change_gravity('right')
-        elif self.gravity == 'right':
+        move = np.argmax(gravity)
+        if move == 0:
             self.change_gravity('left')
+        elif move == 2:
+            self.change_gravity('right')
 
     def change_gravity(self, new_gravity):
         """
@@ -146,3 +145,6 @@ class Player(pygame.sprite.Sprite):
         """
         for i, player_surface in enumerate(self.player_walk):
             self.player_walk[i] = pygame.transform.flip(player_surface, flip_x=True, flip_y=False)
+
+    def cross_over(self, p2, layer_num, point):
+        self.nn.cross_over(p2, layer_num, point)
