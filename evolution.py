@@ -8,7 +8,7 @@ class Evolution:
     def __init__(self):
         self.game_mode = "Neuroevolution"
 
-    def next_population_selection(self, players, num_players, algorithm=1):
+    def next_population_selection(self, players, num_players, algorithm=3):
         """
         Gets list of previous and current players (μ + λ) and returns num_players number of players based on their
         fitness value.
@@ -47,9 +47,29 @@ class Evolution:
                             sorted_one.append(players[j])
                             break
 
+        if algorithm == 3:
+            for k in range(num_players):
+                wheel1 = wheel2 = -1
+                for _ in range(2):
+                    wheel = random.randint(0, sums)
+                    tmp = 0
+                    for j in range(0, len(players)):
+                        if wheel >= tmp:
+                            tmp = tmp + players[j].fitness
+                            if wheel <= tmp:
+                                if wheel1 == -1:
+                                    wheel1 = j
+                                    break
+                                else:
+                                    wheel2 = j
+                if players[wheel1].fitness >= players[wheel2].fitness:
+                    sorted_one.append(players[wheel1])
+                else:
+                    sorted_one.append(players[wheel2])
+
         return sorted_one[: num_players]
 
-    def generate_new_population(self, num_players, prev_players=None, algorithm=2):
+    def generate_new_population(self, num_players, prev_players=None, algorithm=3):
         """
         Gets survivors and returns a list containing num_players number of children.
 
@@ -81,7 +101,7 @@ class Evolution:
                 sums = 0.0
                 for i in prev_players:
                     sums = sums + i.fitness
-                for i in range(num_players):
+                for i in range(0, len(prev_players), 2):
                     for _ in range(2):
                         wheel = random.randint(0, sums)
                         tmp = 0
@@ -100,6 +120,27 @@ class Evolution:
                     child2.mutate(0.3)
                     next_gen.append(self.clone_player(child1))
                     next_gen.append(self.clone_player(child2))
+
+            if algorithm == 3:
+                sums = 0.0
+                w1 = random.randint(0, len(prev_players) - 1)
+                w2 = random.randint(0, len(prev_players) - 1)
+                if prev_players[w1].fitness >= prev_players[w2].fitness:
+                    p1 = prev_players[w1]
+                else:
+                    p1 = prev_players[w2]
+                w1 = random.randint(0, len(prev_players) - 1)
+                w2 = random.randint(0, len(prev_players) - 1)
+                if prev_players[w1].fitness >= prev_players[w2].fitness:
+                    p2 = prev_players[w1]
+                else:
+                    p2 = prev_players[w2]
+                child1, child2 = self.cross_over(p1, p2)
+                child1.mutate(0.3)
+                child2.mutate(0.3)
+                next_gen.append(self.clone_player(child1))
+                next_gen.append(self.clone_player(child2))
+
 
             return next_gen
 
