@@ -27,6 +27,14 @@ class Evolution:
             sums = sums + i.fitness
         avg = sums / len(for_static)
         print("best:  ", for_static[0].fitness, "     avg:  ", avg, "     worst:  ", for_static[-1].fitness)
+        file_object = open('curve.txt', 'a')
+        file_object.write(str(for_static[0].fitness))
+        file_object.write(",")
+        file_object.write(str(avg))
+        file_object.write(",")
+        file_object.write(str(for_static[-1].fitness))
+        file_object.write("\n")
+        file_object.close()
 
         if algorithm == 2:
             for i in range(num_players):
@@ -62,8 +70,8 @@ class Evolution:
                     p1 = prev_players[i]
                     p2 = prev_players[i + 1]
                     child1, child2 = self.cross_over(p1, p2)
-                    child1.mutate(0.3)
-                    child2.mutate(0.3)
+                    child1.mutate(0.2)
+                    child2.mutate(0.2)
                     next_gen.append(self.clone_player(child1))
                     next_gen.append(self.clone_player(child2))
 
@@ -88,8 +96,8 @@ class Evolution:
                                         p2 = prev_players[j]
 
                     child1, child2 = self.cross_over(p1, p2)
-                    child1.mutate(0.2)
-                    child2.mutate(0.2)
+                    child1.mutate(0.3)
+                    child2.mutate(0.3)
                     next_gen.append(self.clone_player(child1))
                     next_gen.append(self.clone_player(child2))
 
