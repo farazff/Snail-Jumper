@@ -1,4 +1,5 @@
 import random
+from copy import deepcopy
 
 import numpy as np
 import pygame
@@ -36,15 +37,17 @@ class Player(pygame.sprite.Sprite):
         if self.game_mode == "Neuroevolution":
             self.fitness = 0  # Initial fitness
 
-            layer_sizes = [8, 50, 3]
+            layer_sizes = [6, 40, 3]
             self.nn = NeuralNetwork(layer_sizes)
 
     def generate_inputs(self, player_x, player_y, obstacles):
-        arr = [player_x / 604, (player_y + 100) / 756]
-        for i in range(3):
+        arr = [player_x / 604, (player_y + 0) / 656]
+        for i in range(2):
             if i < len(obstacles):
-                arr.append(obstacles[i]['x'] / 604)
-                arr.append((obstacles[i]['y'] + 100) / 756)
+                tmpx = deepcopy(obstacles[i]['x'])
+                tmpy = deepcopy(obstacles[i]['y'])
+                arr.append(tmpx / 604)
+                arr.append(tmpy / 656)
                 continue
             arr.append(-1.0)
             arr.append(0.0)

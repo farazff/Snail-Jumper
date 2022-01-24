@@ -54,29 +54,22 @@ class NeuralNetwork:
         other_layer = deepcopy(p2.nn.weights[layer_num].T)
         self_bias = deepcopy(self.b[layer_num].T)
         other_bias = deepcopy(p2.nn.b[layer_num].T)
-
         st = self_layer
         ot = other_layer
         sb = self_bias
         ob = other_bias
-
         new1 = deepcopy(st)
         new2 = deepcopy(ot)
-
         new1b = deepcopy(sb)
         new2b = deepcopy(ob)
-
         for i in range(point, len(st)):
             new1[i] = ot[i]
             new1b[i] = ob[i]
-
         for i in range(point, len(ot)):
             new2[i] = st[i]
             new2b[i] = sb[i]
-
         self.weights[layer_num] = new1.T
         p2.nn.weights[layer_num] = new2.T
-
         self.b[layer_num] = new1b.T
         p2.nn.b[layer_num] = new2b.T
 
@@ -86,8 +79,8 @@ class NeuralNetwork:
         weights = self.weights[layer_number][:, [perceptron_number]]
         b = self.b[layer_number][:, [perceptron_number]]
 
-        weights += np.random.normal(size=weights.shape) / 10
-        b += np.random.normal(size=b.shape) / 10
+        weights = np.random.normal(size=weights.shape) / 10
+        b = np.random.normal(size=b.shape) / 10
 
         self.weights[layer_number][:, [perceptron_number]] = weights
         self.b[layer_number][:, [perceptron_number]] = b
